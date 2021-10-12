@@ -1,0 +1,49 @@
+---
+- name: Create MongoDB root user siteRootAdmin
+  community.mongodb.mongodb_user:
+    database: admin
+    # replica_set: rs0
+    name: "{{ mongodb_admin_user }}"
+    password: "{{ mongodb_admin_password }}"
+    roles: "root"
+  when: groups.mongod.index(inventory_hostname) == 0
+
+- name: Create MongoDB user opsmanager_user
+  community.mongodb.mongodb_user:
+    database: admin
+    login_user: "{{ mongodb_admin_user }}"
+    login_password: "{{ mongodb_admin_password }}"
+    name: "{{ mongodb_opsmanager_user }}"
+    password: "{{ mongodb_opsmanager_password }}"
+    roles: 
+      - { db: "admin", role: "clusterAdmin" }
+      - { db: "admin", role: "clusterMonitor" }
+      - { db: "admin", role: "dbAdminAnyDatabase" }
+      - { db: "admin", role: "readWriteAnyDatabase" }
+      - { db: "admin", role: "userAdminAnyDatabase" }
+      - { db: "admin", role: "backup" }
+      - { db: "admin", role: "restore" }
+  when: groups.mongod.index(inventory_hostname) == 0
+
+
+- name: Create MongoDB user hpc_user
+  community.mongodb.mongodb_user:
+    database: admin
+    login_user: "{{ mongodb_admin_user }}"
+    login_password: "{{ mongodb_admin_password }}"
+    name: "{{ mongodb_hpc_user }}"
+    password: "{{ mongodb_hpc_password }}"
+    roles: "readWriteAnyDatabase"
+  when: groups.mongod.index(inventory_hostname) == 0
+
+- name: Create MongoDB user jsullivan
+  community.mongodb.mongodb_user:
+    database: admin
+    login_user: "{{ mongodb_admin_user }}"
+    login_password: "{{ mongodb_admin_password }}"
+    name: "{{ mongodb_jsullivan_user }}"
+    password: "{{ mongodb_jsullivan_password }}"
+    roles: "readWriteAnyDatabase"
+  when: groups.mongod.index(inventory_hostname) == 0
+
+

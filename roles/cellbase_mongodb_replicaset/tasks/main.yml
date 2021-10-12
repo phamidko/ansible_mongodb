@@ -1,0 +1,32 @@
+---
+# - name: Initialise MongoDB Replicaset rs0
+#   community.mongodb.mongodb_replicaset:
+#     login_user: "{{ mongodb_admin_user }}"
+#     login_password: "{{ mongodb_admin_password }}"
+#     replica_set: "rs0"
+#     members:
+#       - "kmaster"
+#       - "kworker1"
+#       - "kworker2"
+#   when: groups.mongod.index(inventory_hostname) == 0
+#   register: repl
+
+# - name: "Define list of mongodb nodes"
+#   set_fact:
+#     mongodb_nodes: "{{ mongodb_nodes | default({}) + [':'.join((hostvars[item].fqdn,'27017'))] }}"
+#   loop: "{{ groups['all'] | list }}"
+
+# - name: "Configure ReplicaSet"
+#   mongodb_replicaset:
+#     members: "{{ mongodb_nodes | join(',') }}"
+
+# - name: Show all the hosts in the inventory
+#   ansible.builtin.debug:
+#     msg: "{{ item }}"
+#   loop: "{{ groups['all'] }}"
+
+- name: "Define list of mongodb nodes"
+  ansible.builtin.debug:
+    msg: "{{ hostvars[item] }}"
+  with_items: "{{ groups['mongod'] }}"
+  when: groups.mongod.index(inventory_hostname) == 0
