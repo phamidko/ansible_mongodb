@@ -1,4 +1,57 @@
 ---
+- name: Sleep for secondary nodes to come alive
+  pause:
+    minutes: 1
+  when: groups.mongod.index(inventory_hostname) == 0 
+
+- name: Ensure replicaset rs0 exists
+  ignore_errors: yes
+  community.mongodb.mongodb_replicaset:
+    #login_host: localhost
+    login_user: "{{mongodb_admin_user}}"
+    login_password: "{{mongodb_admin_password}}"
+    replica_set: rs0
+    ssl_cert_reqs: "CERT_NONE"
+    members:
+    - kmaster.example.com:27017
+    - kworker1.example.com:27017
+    - kworker2.example.com:27017
+  when: groups.mongod.index(inventory_hostname) == 0 
+
+
+# - name: Check if Replicaset is already initialized
+#   shell: 
+#     cmd: "/usr/bin/mongo -u {{mongodb_admin_user}} -p {{mongodb_admin_password}} --norc --quiet --authenticationDatabase admin localhost:{{ ports_config }}" #
+#     executable: /bin/bash
+#     stdin: "rs.status().codeName" 
+#   register: result
+#   changed_when: false
+#   check_mode: no
+
+# - set_fact:
+#     rs_initiate: |      
+#       {% set members = [] %}
+#       {% for host in groups['mongod'] | sort %}
+#       {% set m = {'_id': mongodb_replication_name } %}
+#       {% set _ = m.update({'host': host + '.' + mongodb_domain + ':' + ports_config | string }) %}
+#       {% set _ = members.append(m) %}
+#       {% endfor %}
+#       {% set init = {'_id': mongodb_replication_name} %}
+#       {% set _ = init.update({'members': members}) %}
+#       {{ init }}
+#     rs: |
+#       {% set i = (result.stdout == 'NotYetInitialized') %}
+#       {% for host in ansible_play_hosts %}
+#       {% set i = i and (hostvars[host].result.stdout == 'NotYetInitialized') %}
+#       {% endfor %}
+#       {{ {'NotYetInitialized': i} }}
+
+
+# - name: "Define list of mongodb nodes"
+#   ansible.builtin.debug:
+#     msg: {{ result }}
+
+
 # - name: Initialise MongoDB Replicaset rs0
 #   community.mongodb.mongodb_replicaset:
 #     login_user: "{{ mongodb_admin_user }}"
@@ -25,9 +78,9 @@
 #   ansible.builtin.debug:
 #     msg: "{{ hostvars[item].ansible_default_ipv4.address  }}"
 #   loop: "{{ groups['all'] }}"
-- debug: msg="host is {{ hostvars[item].mongodb_admin_password}}" # ['inventory_hostname'] 
-  with_items:  "{{ groups['mongod'] }}"
-  when: groups.mongod.index(inventory_hostname) == 0
+# - debug: msg="host is {{ hostvars[item].mongodb_admin_password}}" # ['inventory_hostname'] 
+#   with_items:  "{{ groups['mongod'] }}"
+#   when: groups.mongod.index(inventory_hostname) == 0
 
   # - name: "Define list of mongodb nodes"
 #   ansible.builtin.debug:

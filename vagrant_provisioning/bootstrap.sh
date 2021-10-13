@@ -35,11 +35,14 @@ apt update -qq >/dev/null 2>&1
 add-apt-repository ppa:deadsnakes/ppa
 apt-get install -y build-essential libssl-dev libffi-dev python-dev software-properties-common
 update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
-apt install -y python3-pip python3-apt # python-pymongo 
+apt install -y python3-pip python3.6-distutils # python-pymongo 
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python get-pip.py 
+python -m pip install ansible
 python3 -m pip install 'pymongo[srv]' #compatiable with python 3.6 https://docs.mongodb.com/drivers/pymongo/
 python3 -m pip install 'pymongo[tls]'
 python3 -m pip install 'pymongo[aws]'
-pip3 install requests
+python3 -m pip install requests
 
 
 echo "[TASK 6] Add apt repo for mongodb"
@@ -52,12 +55,12 @@ echo "[TASK 7] Install Mongo components and configuration"
 apt-get update
 apt-get install -y mongodb-org
 
-mkdir -p /datadrive/mongodb
-setfacl -R -m u:mongodb:rwx /datadrive/mongodb
-sed -i -e '/dbPath/ s/: .*/: \/datadrive\/mongodb /' /etc/mongod.conf
+mkdir -p /mongodb/data
+setfacl -R -m u:mongodb:rwx /mongodb/data
+sed -i -e '/dbPath/ s/: .*/: \/mongodb\/data /' /etc/mongod.conf
 echo "storage.directoryPerDB: true" >> /etc/mongod.conf
 
-sed -i '/#security/csecurity:\n  authorization: "enabled"\n' /etc/mongod.conf
+# sed -i '/#security/csecurity:\n  authorization: "enabled"\n' /etc/mongod.conf
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
 
 # allways make replicaset 

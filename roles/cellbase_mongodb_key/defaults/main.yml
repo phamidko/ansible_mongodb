@@ -1,0 +1,8 @@
+---
+# defaults file for mongodb
+
+# mongodb_version: 3.6
+# mongodb_packages: "mongodb-org"
+# mongodb_config_options: []
+mongodb_conf_port: 27017
+mongodb_conf_bindIp: '"0.0.0.0"'

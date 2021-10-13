@@ -1,0 +1,31 @@
+---
+
+- name: Make keyfile on first node
+  shell: |
+    openssl rand -out ~/mongodb.key -base64 741
+    gpg --yes --batch --passphrase={{ mongodb_keyfile_password }} -c ~/mongodb.key
+  changed_when: false
+  check_mode: no
+  when: groups.mongod.index(inventory_hostname) == 0 
+
+- name: Copy to /opt and change ownership to mongod on all nodes
+  ansible.builtin.copy:
+    src: ~/mongodb.key
+    dest: /opt/mongodb.key
+    owner: mongodb
+    group: mongodb
+    mode: '0600'
+
+- name: Configure global settings
+  template:
+    src: "mongod.conf.j2"
+    dest: "{{ mongodb_configfile }}"
+    backup: yes
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Restart service mongod
+  ansible.builtin.service:
+    name: mongod
+    state: restarted

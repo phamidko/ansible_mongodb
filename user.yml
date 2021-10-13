@@ -5,5 +5,5 @@
   roles:
     # - { role: "community.mongodb.mongodb_repository" }
     # - { role: "community.mongodb.mongodb_mongod" }
-    - cellbase_mongodb
+    - cellbase_mongodb_user
 

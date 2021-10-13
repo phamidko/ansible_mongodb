@@ -1,0 +1,32 @@
+{{ ansible_managed | comment }}
+# mongod.conf
+
+# for documentation of all options, see:
+#   http://docs.mongodb.org/manual/reference/configuration-options/
+
+storage:
+  dbPath: /mongodb/data
+  journal:
+    enabled: true
+
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+net:
+  port: {{ mongodb_conf_port }}
+  bindIp: {{ mongodb_conf_bindIp }}
+
+processManagement:
+  timeZoneInfo: /usr/share/zoneinfo
+
+security:
+  authorization: "enabled"
+  keyFile: /opt/mongodb.key
+
+replication:
+  replSetName: {{ mongodb_replication_name }}
+
+storage.directoryPerDB: true
+

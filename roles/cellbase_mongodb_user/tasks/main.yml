@@ -6,7 +6,6 @@
     name: "{{ mongodb_admin_user }}"
     password: "{{ mongodb_admin_password }}"
     roles: "root"
-  #when: groups.mongod.index(inventory_hostname) == 0
 
 - name: Create MongoDB user opsmanager_user
   community.mongodb.mongodb_user:
@@ -23,8 +22,6 @@
       - { db: "admin", role: "userAdminAnyDatabase" }
       - { db: "admin", role: "backup" }
       - { db: "admin", role: "restore" }
-  when: groups.mongod.index(inventory_hostname) == 0
-
 
 - name: Create MongoDB user hpc_user
   community.mongodb.mongodb_user:
@@ -34,7 +31,7 @@
     name: "{{ mongodb_hpc_user }}"
     password: "{{ mongodb_hpc_password }}"
     roles: "readWriteAnyDatabase"
-  when: groups.mongod.index(inventory_hostname) == 0
+#  when: groups.mongod.index(inventory_hostname) == 0
 
 - name: Create MongoDB user jsullivan
   community.mongodb.mongodb_user:
@@ -44,6 +41,6 @@
     name: "{{ mongodb_jsullivan_user }}"
     password: "{{ mongodb_jsullivan_password }}"
     roles: "readWriteAnyDatabase"
-  when: groups.mongod.index(inventory_hostname) == 0
+#  when: groups.mongod.index(inventory_hostname) == 0
 
 
