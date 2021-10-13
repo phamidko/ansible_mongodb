@@ -6,7 +6,7 @@
     name: "{{ mongodb_admin_user }}"
     password: "{{ mongodb_admin_password }}"
     roles: "root"
-  when: groups.mongod.index(inventory_hostname) == 0
+  #when: groups.mongod.index(inventory_hostname) == 0
 
 - name: Create MongoDB user opsmanager_user
   community.mongodb.mongodb_user:

@@ -13,8 +13,9 @@
 
 # - name: "Define list of mongodb nodes"
 #   set_fact:
-#     mongodb_nodes: "{{ mongodb_nodes | default({}) + [':'.join((hostvars[item].fqdn,'27017'))] }}"
-#   loop: "{{ groups['all'] | list }}"
+#    mongodb_nodes: "{{ mongodb_nodes | default({}) + [':'.join((hostvars[item].fqdn,'27017'))] }}"
+  #   mongodb_nodes: "{{ mongodb_nodes | default({}) + hostvars[item].ansible_default_ipv4.address }}"
+  # loop: "{{ groups['all'] | list }}"
 
 # - name: "Configure ReplicaSet"
 #   mongodb_replicaset:
@@ -22,11 +23,33 @@
 
 # - name: Show all the hosts in the inventory
 #   ansible.builtin.debug:
-#     msg: "{{ item }}"
+#     msg: "{{ hostvars[item].ansible_default_ipv4.address  }}"
 #   loop: "{{ groups['all'] }}"
-
-- name: "Define list of mongodb nodes"
-  ansible.builtin.debug:
-    msg: "{{ hostvars[item] }}"
-  with_items: "{{ groups['mongod'] }}"
+- debug: msg="host is {{ hostvars[item].mongodb_admin_password}}" # ['inventory_hostname'] 
+  with_items:  "{{ groups['mongod'] }}"
   when: groups.mongod.index(inventory_hostname) == 0
+
+  # - name: "Define list of mongodb nodes"
+#   ansible.builtin.debug:
+#     msg: "{{ hostvars[item]['ansible_facts']['eth0']['ipv4']['address'] }}"
+#   with_items: "{{ groups['mongod'] }}"
+#   when: groups.mongod.index(inventory_hostname) == 0
+
+
+# - name: "Read current server status"
+#   shell: "mongo -u {{ mongodb_admin_user }} -p {{ mongodb_admin_password }} --host localhost --port 27017 --eval 'rs.status()' --quiet"
+#   #changed_when: false
+#   #ignore_errors: false
+#   register: _mongodb_info
+#   when: groups.mongod.index(inventory_hostname) == 0
+
+# - name: Show all the hosts in the inventory
+#   ansible.builtin.debug:
+#     msg: "{{ _mongodb_info }}"
+  
+
+# - name: "Configure manually ReplicaSet"
+#   shell: "mongo -u {{ mongodb_admin_user }} -p {{ mongodb_admin_password }} --host localhost --port 27017 --eval 'rs.initiate({_id: \"{{ mongodb_replication_name }}\",members: [{ _id: 0, host : \"{{ hostvars[inventory_hostname].ansible_facts.fqdn }}:27017\" }]})' --quiet"
+#   when: 
+# #    - "'NotYetInitialized' in _mongodb_info.stdout"
+#     - groups.mongod.index(inventory_hostname) == 0

@@ -7,3 +7,4 @@ kworker2
 ansible_python_interpreter=/usr/bin/python3
 mongodb_admin_user = phamid
 mongodb_admin_password = phamid
+mongodb_replication_name = rs0
