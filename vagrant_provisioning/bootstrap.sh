@@ -60,18 +60,12 @@ setfacl -R -m u:mongodb:rwx /mongodb/data
 sed -i -e '/dbPath/ s/: .*/: \/mongodb\/data /' /etc/mongod.conf
 echo "storage.directoryPerDB: true" >> /etc/mongod.conf
 
-# sed -i '/#security/csecurity:\n  authorization: "enabled"\n' /etc/mongod.conf
-sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
 
-# allways make replicaset 
-# sed -i '/#replication/creplication:\n  replSetName: rs0\n' /etc/mongod.conf
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
 
 
 systemctl start mongod 
 systemctl enable mongod >/dev/null 2>&1
-
-
-#mongod --port 27017 --dbpath /mongos/db1 --replSet rs0
 
 echo "[TASK 8] Enable ssh password authentication"
 sed -i 's/^PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config

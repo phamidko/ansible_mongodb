@@ -1,9 +1,10 @@
 ---
-- hosts: all
+- hosts: mongod
   become: true
   serial: 1
   roles:
     # - { role: "community.mongodb.mongodb_repository" }
     # - { role: "community.mongodb.mongodb_mongod" }
     - cellbase_mongodb_user
+    - cellbase_mongodb_key
 

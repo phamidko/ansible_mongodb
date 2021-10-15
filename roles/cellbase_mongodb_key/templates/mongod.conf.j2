@@ -8,6 +8,8 @@ storage:
   dbPath: /mongodb/data
   journal:
     enabled: true
+  directoryPerDB: true
+
 
 systemLog:
   destination: file
@@ -28,5 +30,5 @@ security:
 replication:
   replSetName: {{ mongodb_replication_name }}
 
-storage.directoryPerDB: true
+
 
